@@ -186,5 +186,148 @@ function generateQR() {
   <br>Powering Your Digital Future.
 </footer>
 
+<style>
+#ac-image-resizer{max-width:650px;margin:30px auto;padding:22px;background:#111827;color:white;border-radius:18px;font-family:Arial}
+#ac-image-resizer h2{text-align:center;color:#60a5fa}
+#ac-image-resizer label{display:block;margin:14px 0 6px}
+#ac-image-resizer input,#ac-image-resizer select{width:100%;padding:12px;background:#1e293b;color:white;border:1px solid #475569;border-radius:8px;box-sizing:border-box}
+#ac-image-resizer input[type=checkbox]{width:auto}
+#ac-image-resizer button{width:100%;padding:13px;margin-top:15px;background:#2563eb;color:white;border:0;border-radius:9px;font-size:16px;cursor:pointer}
+#ac-image-resizer button:disabled{opacity:.5}
+#ac-image-resizer img{max-width:100%;max-height:300px;border-radius:10px}
+#ac-image-resizer .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#ac-image-resizer .info{text-align:center;color:#93c5fd;margin-top:12px;overflow-wrap:anywhere}
+</style>
+
+<section id="ac-image-resizer">
+<h2>Ajmeer Cloud - Image Resizer</h2>
+<p style="text-align:center">Resize your images easily</p>
+
+<label>Select Image</label>
+<input type="file" id="ac-file" accept="image/jpeg,image/png,image/webp">
+
+<div class="row">
+<div><label>Width (px)</label><input type="number" id="ac-width" min="1"></div>
+<div><label>Height (px)</label><input type="number" id="ac-height" min="1"></div>
+</div>
+
+<label><input type="checkbox" id="ac-lock" checked> Lock Aspect Ratio</label>
+
+<label>Output Format</label>
+<select id="ac-format">
+<option value="image/jpeg">JPG</option>
+<option value="image/png">PNG</option>
+<option value="image/webp">WEBP</option>
+</select>
+
+<label>Quality</label>
+<input type="range" id="ac-quality" min="10" max="100" value="90">
+<div class="info" id="ac-quality-label">90%</div>
+
+<button id="ac-resize" disabled>Resize Image</button>
+
+<div style="text-align:center;margin-top:20px">
+<h3>Preview</h3>
+<img id="ac-preview" style="display:none" alt="Image preview">
+<div class="info" id="ac-info">Upload an image to start.</div>
+</div>
+
+<button id="ac-download" disabled>Download Image</button>
+</section>
+
+<script>
+(function(){
+const el=id=>document.getElementById(id);
+const file=el("ac-file");
+const w=el("ac-width");
+const h=el("ac-height");
+const lock=el("ac-lock");
+const resize=el("ac-resize");
+const download=el("ac-download");
+const preview=el("ac-preview");
+const info=el("ac-info");
+let img=null,ow=0,oh=0,url=null;
+
+function clearResult(){
+if(url)URL.revokeObjectURL(url);
+url=null;
+download.disabled=true;
+}
+
+file.addEventListener("change",()=>{
+const f=file.files[0];
+if(!f)return;
+if(!["image/jpeg","image/png","image/webp"].includes(f.type)){
+alert("Select JPG, PNG or WEBP image.");
+file.value="";return;
+}
+if(f.size>15*1024*1024){
+alert("Image must be below 15 MB.");
+file.value="";return;
+}
+const reader=new FileReader();
+reader.onload=()=>{
+const image=new Image();
+image.onload=()=>{
+img=image;ow=image.naturalWidth;oh=image.naturalHeight;
+w.value=ow;h.value=oh;
+preview.src=reader.result;
+preview.style.display="inline-block";
+info.textContent="Original: "+ow+" x "+oh+" px | "+(f.size/1024).toFixed(1)+" KB";
+resize.disabled=false;clearResult();
+};
+image.onerror=()=>alert("Unable to read image.");
+image.src=reader.result;
+};
+reader.readAsDataURL(f);
+});
+
+w.addEventListener("input",()=>{
+if(img&&lock.checked&&Number(w.value)>0)
+h.value=Math.round(Number(w.value)*oh/ow);
+});
+h.addEventListener("input",()=>{
+if(img&&lock.checked&&Number(h.value)>0)
+w.value=Math.round(Number(h.value)*ow/oh);
+});
+
+el("ac-quality").addEventListener("input",()=>{
+el("ac-quality-label").textContent=el("ac-quality").value+"%";
+});
+
+resize.addEventListener("click",()=>{
+if(!img)return;
+const width=Number(w.value),height=Number(h.value);
+if(!Number.isInteger(width)||!Number.isInteger(height)||width<1||height<1||width>10000||height>10000){
+alert("Enter dimensions between 1 and 10000.");
+return;
+}
+const canvas=document.createElement("canvas");
+canvas.width=width;canvas.height=height;
+const ctx=canvas.getContext("2d");
+const format=el("ac-format").value;
+if(format==="image/jpeg"){
+ctx.fillStyle="#fff";ctx.fillRect(0,0,width,height);
+}
+ctx.drawImage(img,0,0,width,height);
+canvas.toBlob(blob=>{
+if(!blob){alert("Resize failed.");return;}
+clearResult();
+url=URL.createObjectURL(blob);
+preview.src=url;
+info.textContent="New: "+width+" x "+height+" px | "+(blob.size/1024).toFixed(1)+" KB";
+download.disabled=false;
+},format,Number(el("ac-quality").value)/100);
+});
+
+download.addEventListener("click",()=>{
+if(!url)return;
+const ext={"image/jpeg":"jpg","image/png":"png","image/webp":"webp"}[el("ac-format").value];
+const a=document.createElement("a");
+a.href=url;a.download="ajmeer-cloud-resized."+ext;a.click();
+});
+})();
+</script>
+
 </body>
 </html>
