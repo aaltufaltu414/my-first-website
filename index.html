@@ -2,46 +2,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My First Website</title>
-
-  <style>
-    body {
-      background: #101827;
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px 15px;
-    }
-
-    h1 {
-      color: #38bdf8;
-      font-size: 35px;
-    }
-
-    p {
-      font-size: 18px;
-    }
-
-    button {
-      background: #0ea5e9;
-      color: white;
-      border: none;
-      padding: 14px 25px;
-      border-radius: 10px;
-      font-size: 17px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajmeer Cloud | Powering Your Digital Future</title>
+<meta name="description" content="Ajmeer Cloud - Your digital world starts here.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:Arial,sans-serif;
+  background:#080d20;
+  color:#fff;
+  line-height:1.6;
+}
+header{
+  display:flex;justify-content:space-between;
+  align-items:center;padding:20px 8%;
+  background:#0d1430;
+  position:sticky;top:0;z-index:10;
+  border-bottom:1px solid #252d50;
+}
+.logo{font-size:23px;font-weight:bold;color:#a78bfa}
+nav a{
+  color:white;text-decoration:none;
+  margin-left:22px;font-size:14px;
+}
+nav a:hover{color:#a78bfa}
+.hero{
+  min-height:570px;padding:110px 8%;
+  text-align:center;
+  background:radial-gradient(ellipse at top,#30236b,#101a3b 55%,#080d20);
+}
+.hero h1{font-size:clamp(38px,7vw,65px);line-height:1.2}
+.hero h1 span{color:#a78bfa}
+.hero p{color:#c4c9df;margin:20px auto;max-width:600px}
+.btn{
+  display:inline-block;margin-top:18px;
+  padding:13px 25px;border-radius:30px;
+  background:linear-gradient(90deg,#6550df,#a855f7);
+  color:white;text-decoration:none;font-weight:bold;
+}
+section{padding:75px 8%;text-align:center}
+.section-title{font-size:32px;margin-bottom:12px}
+.sub{color:#aeb8d5;margin-bottom:35px}
+.cards{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;margin-top:30px;
+}
+.card{
+  background:#121b38;padding:28px 22px;
+  border:1px solid #29345c;border-radius:16px;
+  transition:.3s;
+}
+.card:hover{transform:translateY(-7px);border-color:#9875ff}
+.card .symbol{font-size:36px;margin-bottom:12px}
+.card h3{color:#c4a7ff;margin-bottom:10px}
+.card p{color:#b8c2dc;font-size:14px}
+.about{
+  background:#101832;
+}
+.about p{max-width:720px;margin:auto;color:#c4c9df}
+.contact{
+  background:linear-gradient(130deg,#171d49,#24134c);
+}
+footer{
+  text-align:center;padding:25px;
+  background:#070b18;color:#9ca8c9;font-size:13px;
+}
+@media(max-width:650px){
+  header{padding:16px 5%;flex-direction:column;gap:10px}
+  nav a{margin:0 8px;font-size:12px}
+  .hero{padding:90px 6%;min-height:500px}
+  section{padding:60px 6%}
+}
+</style>
 </head>
-
 <body>
-  <h1>Welcome to My Website!</h1>
 
-  <p>Ye meri pehli website hai.</p>
+<header>
+  <div class="logo">☁ AJMEER CLOUD</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
-  <button onclick="alert('Welcome!')">
-    Click Me
-  </button>
+<div class="hero" id="home">
+  <h1>Welcome to<br><span>Ajmeer Cloud</span></h1>
+  <p>Powering Your Digital Future.</p>
+  <p>Discover a smarter way to explore technology,
+  digital solutions and the world of cloud services.</p>
+  <a class="btn" href="#services">Explore Platform →</a>
+</div>
+
+<section id="services">
+  <h2 class="section-title">Our Services</h2>
+  <p class="sub">Explore the world of digital possibilities.</p>
+  <div class="cards">
+    <div class="card">
+      <div class="symbol">☁️</div>
+      <h3>Cloud Services</h3>
+      <p>Discover cloud technology and modern digital storage solutions.</p>
+    </div>
+    <div class="card">
+      <div class="symbol">💻</div>
+      <h3>Web Solutions</h3>
+      <p>Explore ideas and solutions for your online presence.</p>
+    </div>
+    <div class="card">
+      <div class="symbol">⚡</div>
+      <h3>Digital Tools</h3>
+      <p>Discover useful tools designed to make digital tasks simpler.</p>
+    </div>
+    <div class="card">
+      <div class="symbol">🚀</div>
+      <h3>Technology</h3>
+      <p>Explore innovation, technology and future possibilities.</p>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <h2 class="section-title">About Ajmeer Cloud</h2>
+  <p>Ajmeer Cloud is a digital platform concept built around
+  technology, innovation and modern online experiences.
+  Our vision is to make the digital world easier to explore.</p>
+</section>
+
+<section class="contact" id="contact">
+  <h2 class="section-title">Let's Explore the Future</h2>
+  <p class="sub">Your Digital World Starts Here.</p>
+  <a class="btn" href="#home">Back to Home ↑</a>
+</section>
+
+<footer>
+  © 2026 Ajmeer Cloud. All Rights Reserved.
+  <br>Powering Your Digital Future.
+</footer>
+
 </body>
 </html>
