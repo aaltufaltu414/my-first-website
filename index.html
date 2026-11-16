@@ -75,6 +75,27 @@ footer{
   .hero{padding:90px 6%;min-height:500px}
   section{padding:60px 6%}
 }
+  .tool-search {
+  max-width: 600px;
+  margin: 25px auto;
+  padding: 0 15px;
+}
+
+.tool-search input {
+  width: 100%;
+  padding: 15px 18px;
+  border: 1px solid #7655d9;
+  border-radius: 12px;
+  background: #151a35;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+.tool-search input:focus {
+  border-color: #a78bfa;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+}
 </style>
 </head>
 <body>
@@ -97,32 +118,67 @@ footer{
   <a class="btn" href="#services">Explore Platform →</a>
 </div>
 
+<div class="tool-search">
+  <input type="text" id="toolSearch"
+         placeholder="🔍 Search your tools...">
+</div>
 <section id="services">
-  <h2 class="section-title">Our Services</h2>
-  <p class="sub">Explore the world of digital possibilities.</p>
+  <h2 class="section-title">Explore Tools</h2>
+  <p class="sub">All your useful tools, in one place.</p>
+
   <div class="cards">
+
+    <a href="#ac-image-resizer" class="card">
+      <div class="symbol">🖼️</div>
+      <h3>Image Tools</h3>
+      <p>Resize images and convert images to PDF.</p>
+    </a>
+
+    <a href="#ac-pdf-tool" class="card">
+      <div class="symbol">📄</div>
+      <h3>PDF Tools</h3>
+      <p>Resize and merge PDF files.</p>
+    </a>
+
     <div class="card">
-      <div class="symbol">☁️</div>
-      <h3>Cloud Services</h3>
-      <p>Discover cloud technology and modern digital storage solutions.</p>
+      <div class="symbol">🧮</div>
+      <h3>Calculator Tools</h3>
+      <p>Coming Soon</p>
     </div>
+
     <div class="card">
-      <div class="symbol">💻</div>
-      <h3>Web Solutions</h3>
-      <p>Explore ideas and solutions for your online presence.</p>
+      <div class="symbol">👨‍💻</div>
+      <h3>Developer Tools</h3>
+      <p>Coming Soon</p>
     </div>
+
     <div class="card">
-      <div class="symbol">⚡</div>
-      <h3>Digital Tools</h3>
-      <p>Discover useful tools designed to make digital tasks simpler.</p>
+      <div class="symbol">📝</div>
+      <h3>Text Tools</h3>
+      <p>Coming Soon</p>
     </div>
+
     <div class="card">
-      <div class="symbol">🚀</div>
-      <h3>Technology</h3>
-      <p>Explore innovation, technology and future possibilities.</p>
+      <div class="symbol">🎨</div>
+      <h3>Design Tools</h3>
+      <p>Coming Soon</p>
     </div>
+
+    <div class="card">
+      <div class="symbol">🎮</div>
+      <h3>Fun Tools</h3>
+      <p>Coming Soon</p>
+    </div>
+
+    <div class="card">
+      <div class="symbol">🌐</div>
+      <h3>Internet Tools</h3>
+      <p>Coming Soon</p>
+    </div>
+
   </div>
 </section>
+
 
 <section id="qr-tool" style="padding:65px 8%;text-align:center;background:#101832;color:white;">
   <h2 style="font-size:32px;margin-bottom:12px;">QR Code Generator</h2>
@@ -699,6 +755,16 @@ async function mergePDFs() {
   }
 }
 </script>
+<script>
+document.getElementById("toolSearch").addEventListener("input", function() {
+  const search = this.value.toLowerCase();
+  const cards = document.querySelectorAll("#services .card");
 
+  cards.forEach(function(card) {
+    const text = card.innerText.toLowerCase();
+    card.style.display = text.includes(search) ? "" : "none";
+  });
+});
+</script>
 </body>
 </html>
