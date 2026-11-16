@@ -329,5 +329,249 @@ a.href=url;a.download="ajmeer-cloud-resized."+ext;a.click();
 })();
 </script>
 
+<!-- AJMEER CLOUD PDF RESIZER -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<style>
+#ac-pdf-tool {
+  max-width: 650px;
+  margin: 30px auto;
+  padding: 24px;
+  background: #111827;
+  color: white;
+  border: 1px solid #374151;
+  border-radius: 18px;
+  font-family: Arial, sans-serif;
+}
+#ac-pdf-tool h2 {
+  color: #60a5fa;
+  text-align: center;
+}
+#ac-pdf-tool p {
+  color: #cbd5e1;
+  text-align: center;
+}
+#ac-pdf-tool label {
+  display: block;
+  margin: 15px 0 7px;
+}
+#ac-pdf-tool input,
+#ac-pdf-tool select {
+  width: 100%;
+  padding: 12px;
+  background: #1e293b;
+  color: white;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+#ac-pdf-tool button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 9px;
+  background: #2563eb;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#ac-pdf-tool button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+#ac-pdf-tool .ac-pdf-info {
+  margin-top: 14px;
+  color: #93c5fd;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+</style>
+
+<section id="ac-pdf-tool">
+  <h2>Ajmeer Cloud PDF Resizer</h2>
+  <p>Resize and optimize your PDF files</p>
+
+  <label>Select PDF File</label>
+  <input type="file" id="ac-pdf-file" accept=".pdf,application/pdf">
+
+  <label>Target Size</label>
+  <input type="number" id="ac-pdf-target" min="1" placeholder="Example: 500">
+
+  <label>Size Unit</label>
+  <select id="ac-pdf-unit">
+    <option value="KB">KB</option>
+    <option value="MB">MB</option>
+  </select>
+
+  <button id="ac-pdf-process" disabled>Optimize PDF</button>
+
+  <div class="ac-pdf-info" id="ac-pdf-info">
+    Select a PDF to get started.
+  </div>
+
+  <button id="ac-pdf-download" disabled>
+    Download Resized PDF
+  </button>
+</section>
+
+<script>
+(function () {
+  const el = id => document.getElementById(id);
+  const fileInput = el("ac-pdf-file");
+  const processBtn = el("ac-pdf-process");
+  const downloadBtn = el("ac-pdf-download");
+  const info = el("ac-pdf-info");
+
+  let selectedFile = null;
+  let resultUrl = null;
+  let busy = false;
+
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    selectedFile = null;
+    processBtn.disabled = true;
+    downloadBtn.disabled = true;
+
+    if (resultUrl) URL.revokeObjectURL(resultUrl);
+    resultUrl = null;
+
+    if (!file) return;
+
+    if (file.type !== "application/pdf" &&
+        !file.name.toLowerCase().endsWith(".pdf")) {
+      alert("Please select a PDF file.");
+      fileInput.value = "";
+      return;
+    }
+
+    if (file.size > 25 * 1024 * 1024) {
+      alert("Please select a PDF smaller than 25 MB.");
+      fileInput.value = "";
+      return;
+    }
+
+    selectedFile = file;
+    processBtn.disabled = false;
+
+    info.textContent =
+      "Original PDF size: " +
+      (file.size / 1024).toFixed(1) + " KB";
+  });
+
+  processBtn.addEventListener("click", async () => {
+    if (!selectedFile || busy) return;
+
+    if (!window.pdfjsLib || !window.PDFLib) {
+      alert("PDF libraries could not load. Please refresh the page and try again.");
+      return;
+    }
+
+    busy = true;
+    processBtn.disabled = true;
+    downloadBtn.disabled = true;
+
+    try {
+      info.textContent = "Processing PDF... Please wait.";
+
+      const bytes = await selectedFile.arrayBuffer();
+      const sourcePdf = await pdfjsLib.getDocument({
+        data: bytes.slice(0)
+      }).promise;
+
+      const outputPdf = await PDFLib.PDFDocument.create();
+
+      for (let i = 1; i <= sourcePdf.numPages; i++) {
+        info.textContent =
+          "Processing page " + i + " of " + sourcePdf.numPages;
+
+        const page = await sourcePdf.getPage(i);
+        const viewport = page.getViewport({ scale: 1.5 });
+
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.ceil(viewport.width);
+        canvas.height = Math.ceil(viewport.height);
+
+        const context = canvas.getContext("2d");
+
+        await page.render({
+          canvasContext: context,
+          viewport: viewport
+        }).promise;
+
+        const imageBlob = await new Promise(resolve =>
+          canvas.toBlob(resolve, "image/jpeg", 0.72)
+        );
+
+        if (!imageBlob) throw new Error("Page conversion failed.");
+
+        const imageBytes = await imageBlob.arrayBuffer();
+        const embedded = await outputPdf.embedJpg(imageBytes);
+
+        const newPage = outputPdf.addPage([
+          page.view[2] - page.view[0],
+          page.view[3] - page.view[1]
+        ]);
+
+        newPage.drawImage(embedded, {
+          x: 0,
+          y: 0,
+          width: newPage.getWidth(),
+          height: newPage.getHeight()
+        });
+
+        canvas.width = 1;
+        canvas.height = 1;
+      }
+
+      const outputBytes = await outputPdf.save();
+      const blob = new Blob([outputBytes], {
+        type: "application/pdf"
+      });
+
+      if (resultUrl) URL.revokeObjectURL(resultUrl);
+      resultUrl = URL.createObjectURL(blob);
+
+      const originalKB = selectedFile.size / 1024;
+      const newKB = blob.size / 1024;
+
+      info.textContent =
+        "Original: " + originalKB.toFixed(1) +
+        " KB | New: " + newKB.toFixed(1) +
+        " KB | Pages: " + sourcePdf.numPages +
+        (newKB < originalKB
+          ? " | Size reduced"
+          : " | Output is larger");
+
+      downloadBtn.disabled = false;
+
+    } catch (error) {
+      console.error(error);
+      info.textContent = "Could not process this PDF. Please try another file.";
+      alert("PDF processing failed. Please try another PDF.");
+    } finally {
+      busy = false;
+      processBtn.disabled = !selectedFile;
+    }
+  });
+
+  downloadBtn.addEventListener("click", () => {
+    if (!resultUrl) return;
+
+    const link = document.createElement("a");
+    link.href = resultUrl;
+    link.download = "ajmeer-cloud-resized.pdf";
+    link.click();
+  });
+})();
+</script>
+  
 </body>
 </html>
