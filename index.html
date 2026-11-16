@@ -124,6 +124,50 @@ footer{
   </div>
 </section>
 
+<section id="qr-tool" style="padding:65px 8%;text-align:center;background:#101832;color:white;">
+  <h2 style="font-size:32px;margin-bottom:12px;">QR Code Generator</h2>
+  <p style="color:#b8c2dc;margin-bottom:25px;">Create Your Own QR Code</p>
+
+  <div style="max-width:500px;margin:auto;background:#121b38;padding:25px;border:1px solid #6550df;border-radius:16px;">
+    <input
+      id="qrText"
+      type="text"
+      placeholder="Enter text or website link"
+      style="width:100%;padding:15px;border-radius:8px;border:1px solid #777;margin-bottom:15px;font-size:16px;"
+    >
+
+    <button onclick="generateQR()" style="padding:13px 25px;border:0;border-radius:25px;background:linear-gradient(90deg,#6550df,#a855f7);color:white;font-weight:bold;font-size:16px;">
+      Generate QR Code
+    </button>
+
+    <p id="qrMessage" style="margin-top:15px;color:#c4a7ff;"></p>
+
+    <div id="qrResult" style="margin-top:20px;"></div>
+  </div>
+</section>
+
+<script>
+function generateQR() {
+  const text = document.getElementById("qrText").value.trim();
+  const result = document.getElementById("qrResult");
+  const message = document.getElementById("qrMessage");
+
+  if (!text) {
+    message.textContent = "Please enter some text or a link.";
+    result.innerHTML = "";
+    return;
+  }
+
+  const url = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(text);
+
+  result.innerHTML = '<img src="' + url + '" alt="Your QR Code" style="width:250px;max-width:100%;background:white;padding:10px;border-radius:10px;">' +
+    '<p style="color:#b8c2dc;margin-top:12px;">Your QR Code is ready! Long press the image to save it.</p>' +
+    '<a href="' + url + '" target="_blank" rel="noopener" style="color:#c4a7ff;">Open QR Image</a>';
+
+  message.textContent = "QR Code generated successfully!";
+}
+</script>
+  
 <section class="about" id="about">
   <h2 class="section-title">About Ajmeer Cloud</h2>
   <p>Ajmeer Cloud is a digital platform concept built around
