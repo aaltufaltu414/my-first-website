@@ -573,5 +573,74 @@ a.href=url;a.download="ajmeer-cloud-resized."+ext;a.click();
 })();
 </script>
   
+<!-- Image to PDF Tool -->
+<section id="image-to-pdf" style="background:#f4f7fb;padding:22px;border-radius:14px;margin:25px 0;color:#172033;">
+  <h2>🖼️ Image to PDF</h2>
+  <p>Convert your images into one PDF file.</p>
+
+  <input type="file" id="itpFiles" accept="image/*" multiple style="display:block;margin:15px 0;">
+  <button type="button" onclick="convertImagesToPDF()" style="padding:12px 20px;background:#2563eb;color:white;border:0;border-radius:8px;">
+    Convert to PDF
+  </button>
+  <p id="itpStatus"></p>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+async function convertImagesToPDF() {
+  const files = document.getElementById("itpFiles").files;
+  const status = document.getElementById("itpStatus");
+
+  if (!files.length) {
+    status.textContent = "Please select at least one image.";
+    return;
+  }
+
+  if (!window.jspdf) {
+    status.textContent = "PDF library is loading. Please try again.";
+    return;
+  }
+
+  status.textContent = "Creating PDF...";
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF();
+
+    for (let i = 0; i < files.length; i++) {
+      const data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(files[i]);
+      });
+
+      const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = data;
+      });
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const ratio = Math.min(pageWidth / image.width, pageHeight / image.height);
+      const width = image.width * ratio;
+      const height = image.height * ratio;
+      const x = (pageWidth - width) / 2;
+      const y = (pageHeight - height) / 2;
+
+      if (i > 0) pdf.addPage();
+      pdf.addImage(data, "JPEG", x, y, width, height);
+    }
+
+    pdf.save("Ajmeer-Cloud-Images.pdf");
+    status.textContent = "PDF downloaded successfully!";
+  } catch (error) {
+    status.textContent = "Could not create PDF. Please try another image.";
+  }
+}
+</script>
+
 </body>
 </html>
