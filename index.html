@@ -642,5 +642,63 @@ async function convertImagesToPDF() {
 }
 </script>
 
+<!-- PDF Merger Tool -->
+<section id="pdf-merger" style="background:#f4f7fb;padding:22px;border-radius:14px;margin:25px 0;color:#172033;">
+  <h2>📄 PDF Merger</h2>
+  <p>Combine multiple PDF files into one PDF.</p>
+
+  <input type="file" id="mergePDFfiles" accept="application/pdf,.pdf" multiple style="display:block;margin:15px 0;">
+  <button type="button" onclick="mergePDFs()" style="padding:12px 20px;background:#2563eb;color:white;border:0;border-radius:8px;">
+    Merge PDFs
+  </button>
+  <p id="mergePDFstatus"></p>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+async function mergePDFs() {
+  const files = document.getElementById("mergePDFfiles").files;
+  const status = document.getElementById("mergePDFstatus");
+
+  if (files.length < 2) {
+    status.textContent = "Please select at least 2 PDF files.";
+    return;
+  }
+
+  if (!window.PDFLib) {
+    status.textContent = "PDF library is loading. Please try again.";
+    return;
+  }
+
+  status.textContent = "Merging PDFs...";
+
+  try {
+    const mergedPdf = await PDFLib.PDFDocument.create();
+
+    for (const file of files) {
+      const bytes = await file.arrayBuffer();
+      const pdf = await PDFLib.PDFDocument.load(bytes);
+      const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+
+      pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    const mergedBytes = await mergedPdf.save();
+    const blob = new Blob([mergedBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "Ajmeer-Cloud-Merged.pdf";
+    link.click();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    status.textContent = "PDFs merged and downloaded successfully!";
+  } catch (error) {
+    status.textContent = "Could not merge PDFs. Please check your files.";
+  }
+}
+</script>
+
 </body>
 </html>
