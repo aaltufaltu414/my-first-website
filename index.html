@@ -862,6 +862,7 @@ function calculateAge() {
 }
 </script>
   
+
 <!-- PERCENTAGE CALCULATOR -->
 <section id="percentage-calculator" class="tool-section">
   <h2>Percentage Calculator</h2>
@@ -872,7 +873,7 @@ function calculateAge() {
     <h3>1. Find Percentage</h3>
     <input type="number" id="percentValue" placeholder="Enter number">
     <input type="number" id="percentRate" placeholder="Enter percentage">
-    <button onclick="findPercentage()">Calculate</button>
+    <button type="button" id="findPercentBtn">Calculate</button>
     <p id="percentResult"></p>
 
     <hr>
@@ -880,7 +881,7 @@ function calculateAge() {
     <h3>2. What Percentage?</h3>
     <input type="number" id="partValue" placeholder="Enter first number">
     <input type="number" id="totalValue" placeholder="Enter total number">
-    <button onclick="whatPercentage()">Calculate</button>
+    <button type="button" id="whatPercentBtn">Calculate</button>
     <p id="whatResult"></p>
 
     <hr>
@@ -888,58 +889,50 @@ function calculateAge() {
     <h3>3. Increase / Decrease</h3>
     <input type="number" id="oldValue" placeholder="Original value">
     <input type="number" id="newValue" placeholder="New value">
-    <button onclick="changePercentage()">Calculate</button>
+    <button type="button" id="changePercentBtn">Calculate</button>
     <p id="changeResult"></p>
 
   </div>
 </section>
 
 <script>
-function findPercentage() {
-  const n = Number(document.getElementById("percentValue").value);
-  const p = Number(document.getElementById("percentRate").value);
-
-  if (document.getElementById("percentValue").value === "" ||
-      document.getElementById("percentRate").value === "") {
-    document.getElementById("percentResult").textContent = "Enter both values.";
-    return;
-  }
+document.getElementById("findPercentBtn").addEventListener("click", function() {
+  const n = document.getElementById("percentValue").value;
+  const p = document.getElementById("percentRate").value;
 
   document.getElementById("percentResult").textContent =
-    "Result: " + (n * p / 100);
-}
+    n === "" || p === "" ? "Enter both values." :
+    "Result: " + (Number(n) * Number(p) / 100);
+});
 
-function whatPercentage() {
-  const a = Number(document.getElementById("partValue").value);
-  const b = Number(document.getElementById("totalValue").value);
-
-  if (document.getElementById("partValue").value === "" ||
-      document.getElementById("totalValue").value === "" || b === 0) {
-    document.getElementById("whatResult").textContent = "Enter valid values. Total cannot be zero.";
-    return;
-  }
+document.getElementById("whatPercentBtn").addEventListener("click", function() {
+  const a = document.getElementById("partValue").value;
+  const b = document.getElementById("totalValue").value;
 
   document.getElementById("whatResult").textContent =
-    "Result: " + (a / b * 100).toFixed(2) + "%";
-}
+    a === "" || b === "" || Number(b) === 0 ?
+    "Enter valid values. Total cannot be zero." :
+    "Result: " + (Number(a) / Number(b) * 100).toFixed(2) + "%";
+});
 
-function changePercentage() {
-  const oldNum = Number(document.getElementById("oldValue").value);
-  const newNum = Number(document.getElementById("newValue").value);
+document.getElementById("changePercentBtn").addEventListener("click", function() {
+  const oldNum = document.getElementById("oldValue").value;
+  const newNum = document.getElementById("newValue").value;
 
-  if (document.getElementById("oldValue").value === "" ||
-      document.getElementById("newValue").value === "" || oldNum === 0) {
-    document.getElementById("changeResult").textContent = "Enter valid values. Original value cannot be zero.";
+  if (oldNum === "" || newNum === "" || Number(oldNum) === 0) {
+    document.getElementById("changeResult").textContent =
+      "Enter valid values. Original value cannot be zero.";
     return;
   }
 
-  const change = ((newNum - oldNum) / oldNum) * 100;
+  const change = ((Number(newNum) - Number(oldNum)) / Number(oldNum)) * 100;
   const label = change > 0 ? "Increase" : change < 0 ? "Decrease" : "No change";
 
   document.getElementById("changeResult").textContent =
     label + ": " + Math.abs(change).toFixed(2) + "%";
-}
+});
 </script>
+  
   
 </body>
 </html>
