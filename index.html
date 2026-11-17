@@ -936,5 +936,100 @@ document.getElementById("changePercentBtn").addEventListener("click", function()
 </script>
   
   
+<!-- DEVELOPER TOOLS -->
+<section id="developer-tools" class="tool-section">
+  <h2>Developer Tools</h2>
+  <p>Useful tools for developers and programmers.</p>
+
+  <div class="age-box">
+    <h3>Base64 Encoder / Decoder</h3>
+
+    <textarea id="base64Input"
+      placeholder="Enter your text or Base64 code..."
+      rows="5"
+      style="width:100%; padding:12px; margin:15px 0; border-radius:8px;"></textarea>
+
+    <button type="button" id="base64Encode">Encode to Base64</button>
+
+    <button type="button" id="base64Decode">
+      Decode to Text
+    </button>
+
+    <h3>Result</h3>
+
+    <textarea id="base64Output"
+      readonly
+      rows="5"
+      placeholder="Your result will appear here..."
+      style="width:100%; padding:12px; margin:15px 0; border-radius:8px;"></textarea>
+
+    <button type="button" id="base64Copy">Copy Result</button>
+    <button type="button" id="base64Clear">Clear All</button>
+
+    <p id="base64Message"></p>
+  </div>
+</section>
+
+<script>
+document.getElementById("base64Encode").addEventListener("click", function() {
+  const input = document.getElementById("base64Input").value;
+  const output = document.getElementById("base64Output");
+  const message = document.getElementById("base64Message");
+
+  if (!input.trim()) {
+    message.textContent = "Please enter some text.";
+    return;
+  }
+
+  const bytes = new TextEncoder().encode(input);
+  let binary = "";
+
+  bytes.forEach(byte => {
+    binary += String.fromCharCode(byte);
+  });
+
+  output.value = btoa(binary);
+  message.textContent = "Text encoded successfully!";
+});
+
+document.getElementById("base64Decode").addEventListener("click", function() {
+  const input = document.getElementById("base64Input").value.trim();
+  const output = document.getElementById("base64Output");
+  const message = document.getElementById("base64Message");
+
+  try {
+    const binary = atob(input);
+    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+    output.value = new TextDecoder("utf-8", {fatal:true}).decode(bytes);
+    message.textContent = "Base64 decoded successfully!";
+  } catch (error) {
+    message.textContent = "Invalid Base64 code!";
+  }
+});
+
+document.getElementById("base64Copy").addEventListener("click", async function() {
+  const output = document.getElementById("base64Output");
+  const message = document.getElementById("base64Message");
+
+  if (!output.value) {
+    message.textContent = "No result to copy.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(output.value);
+    message.textContent = "Result copied!";
+  } catch (error) {
+    message.textContent = "Copy not available. Please copy manually.";
+  }
+});
+
+document.getElementById("base64Clear").addEventListener("click", function() {
+  document.getElementById("base64Input").value = "";
+  document.getElementById("base64Output").value = "";
+  document.getElementById("base64Message").textContent = "Cleared!";
+});
+</script>
+  
 </body>
 </html>
