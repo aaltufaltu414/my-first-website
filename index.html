@@ -1030,6 +1030,82 @@ document.getElementById("base64Clear").addEventListener("click", function() {
   document.getElementById("base64Message").textContent = "Cleared!";
 });
 </script>
+
+<!-- URL ENCODER / DECODER -->
+<section id="url-encoder" class="tool-section">
+  <h2>URL Encoder / Decoder</h2>
+  <p>Encode and decode URL text easily.</p>
+
+  <div class="age-box">
+    <textarea id="urlInput"
+      rows="5"
+      placeholder="Enter URL or text..."
+      style="width:100%;padding:12px;margin:15px 0;border-radius:8px;"></textarea>
+
+    <button type="button" onclick="encodeURL()">Encode URL</button>
+    <button type="button" onclick="decodeURL()">Decode URL</button>
+
+    <h3>Result</h3>
+
+    <textarea id="urlOutput"
+      rows="5"
+      readonly
+      placeholder="Your result..."
+      style="width:100%;padding:12px;margin:15px 0;border-radius:8px;"></textarea>
+
+    <button type="button" onclick="copyURL()">Copy Result</button>
+    <button type="button" onclick="clearURL()">Clear All</button>
+
+    <p id="urlMessage"></p>
+  </div>
+</section>
+
+<script>
+function encodeURL() {
+  const input = document.getElementById("urlInput").value;
+
+  if (!input) {
+    document.getElementById("urlMessage").textContent = "Enter some text.";
+    return;
+  }
+
+  document.getElementById("urlOutput").value = encodeURIComponent(input);
+  document.getElementById("urlMessage").textContent = "URL encoded successfully!";
+}
+
+function decodeURL() {
+  const input = document.getElementById("urlInput").value;
+
+  try {
+    document.getElementById("urlOutput").value = decodeURIComponent(input);
+    document.getElementById("urlMessage").textContent = "URL decoded successfully!";
+  } catch (error) {
+    document.getElementById("urlMessage").textContent = "Invalid encoded URL!";
+  }
+}
+
+async function copyURL() {
+  const output = document.getElementById("urlOutput").value;
+
+  if (!output) {
+    document.getElementById("urlMessage").textContent = "Nothing to copy.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(output);
+    document.getElementById("urlMessage").textContent = "Copied successfully!";
+  } catch (error) {
+    document.getElementById("urlMessage").textContent = "Copy unavailable. Copy manually.";
+  }
+}
+
+function clearURL() {
+  document.getElementById("urlInput").value = "";
+  document.getElementById("urlOutput").value = "";
+  document.getElementById("urlMessage").textContent = "Cleared!";
+}
+</script>
   
 </body>
 </html>
