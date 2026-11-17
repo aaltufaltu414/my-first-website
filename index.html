@@ -1106,6 +1106,71 @@ function clearURL() {
   document.getElementById("urlMessage").textContent = "Cleared!";
 }
 </script>
+
+<!-- UUID GENERATOR -->
+<section id="uuid-generator" class="tool-section">
+  <h2>UUID Generator</h2>
+  <p>Generate unique IDs instantly.</p>
+
+  <div class="age-box">
+    <h3>Your UUID</h3>
+
+    <input
+      type="text"
+      id="uuidOutput"
+      readonly
+      placeholder="Your UUID will appear here"
+    >
+
+    <button type="button" onclick="generateUUID()">
+      Generate UUID
+    </button>
+
+    <button type="button" onclick="copyUUID()">
+      Copy UUID
+    </button>
+
+    <p id="uuidMessage"></p>
+  </div>
+</section>
+
+<script>
+function generateUUID() {
+  if (crypto.randomUUID) {
+    document.getElementById("uuidOutput").value =
+      crypto.randomUUID();
+  } else {
+    document.getElementById("uuidOutput").value =
+      "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === "x" ? r : (r & 3 | 8);
+        return v.toString(16);
+      });
+  }
+
+  document.getElementById("uuidMessage").textContent =
+    "New UUID generated!";
+}
+
+async function copyUUID() {
+  const output = document.getElementById("uuidOutput").value;
+
+  if (!output) {
+    document.getElementById("uuidMessage").textContent =
+      "Generate a UUID first.";
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(output);
+    document.getElementById("uuidMessage").textContent =
+      "UUID copied successfully!";
+  } catch (error) {
+    document.getElementById("uuidMessage").textContent =
+      "Copy unavailable. Please copy manually.";
+  }
+}
+</script>
   
 </body>
 </html>
